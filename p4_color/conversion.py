@@ -1,6 +1,6 @@
 import numpy as np
 
-def rgb2ycrcb(I_RGB):
+def rgb_to_ycrcb(I_RGB):
     # Input: uint8 NumPy array with shape (height, width, 3)
     # Output: three uint8 arrays — Yq, Crq, Cbq
 
@@ -36,7 +36,7 @@ def rgb2ycrcb(I_RGB):
 
     return Yq, Crq, Cbq
 
-def yrcb2rgb(Yq, Crq, Cbq):
+def ycrcb_to_rgb(Yq, Crq, Cbq):
     # Input: three uint8 arrays — Yq, Crq, Cbq
     # Output: uint8 NumPy array with shape (height, width, 3)
 
