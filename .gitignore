@@ -4,3 +4,5 @@ __pycache__/
 *.mp4
 p4_color/datos/
 p4_color/resultados/
+p5_muestreo/resultados/
+p6_dct/resultados/
