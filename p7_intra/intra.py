@@ -45,3 +45,27 @@ def ceros_finales(vector):
         return vector.size    # Return the number of elements: all of them are zero.
     ultima_posicion = no_nulos[-1]
     return vector.size - ultima_posicion - 1        # Count the positions remaining to the end of the vector.
+
+def cuantificacion_inversa(indices, FC, pesos=PESOS):
+    validar(indices, FC, pesos)
+    Xr = redondear(indices * FC * pesos)    # Reverse the AC scaling using the same weights and FC.
+    Xr[0, 0] = indices[0, 0] * FC         # Restore the retained DC value without rounding it.
+    return Xr
+
+def cod_intra(imagen, FC, pesos=PESOS, desplazamiento=128):
+    extendida, forma = extender(imagen)
+    indices = np.empty_like(extendida)
+    for fila, columna, bloque in iter_bloques(extendida):
+        # T is the P6 matrix, calculated once when this module is imported.
+        X = T @ (bloque - desplazamiento) @ T.T   # Apply the matrix DCT to (bloque - desplazamiento).
+        # Quantize X with FC and pesos; store the result at this block position.
+        indices[fila:fila+8, columna:columna+8] = cuantificar(X, FC, pesos)
+    return indices, forma
+
+def decod_intra(indices, forma, FC, pesos=PESOS, desplazamiento=128):
+    recuperada = np.empty_like(indices)
+    for fila, columna, bloque in iter_bloques(indices):
+        Xr = cuantificacion_inversa(bloque, FC, pesos)
+        recuperada[fila:fila+8, columna:columna+8] = T.T @ Xr @ T    # Apply the matrix IDCT to Xr using T.T and T.
+    h, w = forma
+    return recuperada[:h, :w] + desplazamiento
