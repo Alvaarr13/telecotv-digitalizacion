@@ -21,7 +21,7 @@ def validar(X, FC, pesos):
 
 def cuantificar(X, FC, pesos=PESOS):
     validar(X, FC, pesos)
-    indices = redondear(X / (FC * pesos))   # Apply the AC quantization expression.
+    indices = redondear(16 * X / (FC * pesos))   # Apply the AC quantization expression.
     indices[0, 0] = X[0, 0] / FC           # Retain DC without quantization.
     return indices
 
@@ -48,7 +48,7 @@ def ceros_finales(vector):
 
 def cuantificacion_inversa(indices, FC, pesos=PESOS):
     validar(indices, FC, pesos)
-    Xr = redondear(indices * FC * pesos)    # Reverse the AC scaling using the same weights and FC.
+    Xr = redondear(indices * FC * pesos / 16)    # Reverse the AC scaling using the same weights and FC.
     Xr[0, 0] = indices[0, 0] * FC         # Restore the retained DC value without rounding it.
     return Xr
 
